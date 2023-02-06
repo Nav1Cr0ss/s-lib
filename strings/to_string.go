@@ -7,8 +7,8 @@ func CastToString[T ~string](value T) string {
 func GetArrayOfStrings[T ~string](arr []T) []string {
 	tmp := make([]string, len(arr))
 
-	for _, val := range arr {
-		tmp = append(tmp, CastToString(val))
+	for i, val := range arr {
+		tmp[i] = CastToString(val)
 	}
 
 	return tmp

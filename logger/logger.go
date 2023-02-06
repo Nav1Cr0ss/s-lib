@@ -2,6 +2,7 @@ package logger
 
 import (
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type Logger struct {
@@ -9,15 +10,18 @@ type Logger struct {
 }
 
 // NewLogger return logger instance
-func NewLogger(debug bool) *Logger {
-	loggers := map[bool]func(options ...zap.Option) (*zap.Logger, error){
-		true:  zap.NewDevelopment,
-		false: zap.NewProduction,
+func NewLogger(debug bool) (*Logger, *zap.Logger) {
+	configs := map[bool]func() zap.Config{
+		true:  zap.NewDevelopmentConfig,
+		false: zap.NewProductionConfig,
 	}
 
-	logger, _ := loggers[debug]()
-	defer logger.Sync() // flushes buffer, if any
-	sugar := logger.Sugar()
+	config := configs[debug]()
+	config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	zapLogger, _ := config.Build()
+	defer zapLogger.Sync() // flushes buffer, if any
 
-	return &Logger{sugar}
+	sugar := zapLogger.Sugar()
+
+	return &Logger{sugar}, zapLogger
 }
