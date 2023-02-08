@@ -10,7 +10,7 @@ type Logger struct {
 }
 
 // NewLogger return logger instance
-func NewLogger(debug bool) (*Logger, *zap.Logger) {
+func NewLogger(debug bool) *Logger {
 	configs := map[bool]func() zap.Config{
 		true:  zap.NewDevelopmentConfig,
 		false: zap.NewProductionConfig,
@@ -23,5 +23,5 @@ func NewLogger(debug bool) (*Logger, *zap.Logger) {
 
 	sugar := zapLogger.Sugar()
 
-	return &Logger{sugar}, zapLogger
+	return &Logger{sugar}
 }
