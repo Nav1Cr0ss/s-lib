@@ -11,7 +11,6 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -41,11 +40,10 @@ func NewGRPCServer(
 
 func (s *GRPCServer) initGRPC(log *zap.Logger) *grpc.Server {
 	options := grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-		grpc_ctxtags.UnaryServerInterceptor(),
 		grpc_zap.UnaryServerInterceptor(log),
 		grpc_validator.UnaryServerInterceptor(),
 		grpc_recovery.UnaryServerInterceptor(),
-		interceptor.UnaryServerInterceptor(),
+		interceptor.SetUserInterceptor(),
 	))
 	return grpc.NewServer(options)
 }
