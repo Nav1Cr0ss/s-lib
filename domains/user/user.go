@@ -11,9 +11,9 @@ func contains[T comparable](s []T, el T) bool {
 }
 
 type User struct {
-	Id          string `json:"id"`
-	IsAdmin     bool   `json:"is_admin"`
-	Permissions []string
+	Id          string   `json:"id"`
+	IsAdmin     bool     `json:"is_admin"`
+	Permissions []string `json:"permissions"`
 }
 
 func (u User) CheckPermission(handler string) bool {
