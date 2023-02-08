@@ -25,7 +25,7 @@ func NewConfiguration(appCfg Configuration, prefixes ...string) {
 
 	if err = envconfig.Process(prefix, appCfg); err != nil {
 		_ = envconfig.Usage(prefix, appCfg)
-		log.Fatal("failed on parse configs")
+		log.Fatalf("failed on parse configs: %s", err)
 	}
 }
 

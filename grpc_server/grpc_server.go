@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/Nav1Cr0ss/s-lib/configuration"
+	"github.com/Nav1Cr0ss/s-lib/interceptor"
 	"github.com/Nav1Cr0ss/s-lib/logger"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
@@ -44,6 +45,7 @@ func (s *GRPCServer) initGRPC(log *zap.Logger) *grpc.Server {
 		grpc_zap.UnaryServerInterceptor(log),
 		grpc_validator.UnaryServerInterceptor(),
 		grpc_recovery.UnaryServerInterceptor(),
+		interceptor.UnaryServerInterceptor(),
 	))
 	return grpc.NewServer(options)
 }
@@ -69,6 +71,7 @@ func Serve(s *GRPCServer) {
 	err := server.Serve(s.lis)
 	if err != nil {
 		_ = s.lis.Close()
+		server.GracefulStop()
 		log.Fatal("error on starting serving")
 	}
 
