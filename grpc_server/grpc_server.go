@@ -9,7 +9,6 @@ import (
 	"github.com/Nav1Cr0ss/s-lib/interceptor"
 	"github.com/Nav1Cr0ss/s-lib/logger"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"google.golang.org/grpc"
 )
 
@@ -36,9 +35,9 @@ func NewGRPCServer(
 
 func (s *GRPCServer) initGRPC(log *logger.Logger) *grpc.Server {
 	options := grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-		interceptor.SetLogger(log),
-		grpc_validator.UnaryServerInterceptor(),
-		interceptor.SetUserInterceptor(),
+		interceptor.LoggerInterceptor(log),
+		interceptor.ValidatorInterceptor(),
+		interceptor.UserInterceptor(),
 	))
 	return grpc.NewServer(options)
 }
