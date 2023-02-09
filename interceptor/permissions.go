@@ -37,3 +37,19 @@ func PermissionInterceptor() grpc.UnaryServerInterceptor {
 		return handler(ctx, req)
 	}
 }
+
+func TestInterceptor(
+	ctx context.Context,
+	method string,
+	req interface{},
+	reply interface{},
+	cc *grpc.ClientConn,
+	invoker grpc.UnaryInvoker,
+	opts ...grpc.CallOption,
+) error {
+	// Logic before invoking the invoker
+	// Calls the invoker to execute RPC
+	err := invoker(ctx, method, req, reply, cc, opts...)
+	// Logic after invoking the invoker
+	return err
+}

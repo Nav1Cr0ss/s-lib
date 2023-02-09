@@ -35,8 +35,8 @@ func NewGRPCServer(
 func (s *GRPCServer) initGRPC(log *logger.Logger) *grpc.Server {
 	options := grpc.UnaryInterceptor(interceptor.ChainUnaryServer(
 		interceptor.LoggerInterceptor(log),
-		interceptor.ValidatorInterceptor(),
 		interceptor.UserInterceptor(),
+		interceptor.ValidatorInterceptor(),
 	))
 	return grpc.NewServer(options)
 }

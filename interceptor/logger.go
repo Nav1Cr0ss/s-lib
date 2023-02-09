@@ -29,7 +29,7 @@ func CodeToLevel(code codes.Code) zapcore.Level {
 	case codes.AlreadyExists:
 		return zap.InfoLevel
 	case codes.PermissionDenied:
-		return zap.WarnLevel
+		return zap.InfoLevel
 	case codes.Unauthenticated:
 		return zap.InfoLevel
 	case codes.ResourceExhausted:
@@ -60,16 +60,18 @@ func ErrorToCode(err error) codes.Code {
 func LoggerInterceptor(log *logger.Logger) grpc.UnaryServerInterceptor {
 
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		startTime := time.Now()
 
 		h, err := handler(ctx, req)
-		code := ErrorToCode(err)
-		level := CodeToLevel(code)
+		c := ErrorToCode(err)
+		level := CodeToLevel(c)
 
 		log.CL.Log(level, "invoked GRPC",
+			zap.String("start", startTime.Format(time.RFC3339)),
 			zap.String("method", info.FullMethod),
-			zap.String("code", code.String()),
-			zap.Time("time", time.Now()),
+			zap.String("code", c.String()),
 			zap.Error(err),
+			zap.Duration("duration", time.Since(startTime).Round(time.Millisecond)),
 		)
 
 		return h, err
